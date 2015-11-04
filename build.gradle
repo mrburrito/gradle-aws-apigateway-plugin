@@ -1,0 +1,48 @@
+group 'com.shankyank.gradle'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'groovy'
+apply plugin: 'maven-publish'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+publishing {
+    publications {
+        plugin(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+    compile 'com.amazonaws:aws-java-sdk-api-gateway:1.10.+'
+    compile 'jp.classmethod.aws:gradle-aws-plugin:0.22'
+    compile 'io.swagger:swagger-core:1.5.0'
+    compile 'io.swagger:swagger-parser:1.0.7'
+    compile 'org.raml:raml-parser:0.8.11'
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+eclipse {
+    classpath {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.8'
+}
