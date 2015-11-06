@@ -8,8 +8,13 @@ import org.gradle.api.tasks.TaskAction
  * a new API every time the task is run.
  */
 class AWSApiGatewayImportCreateTask extends BaseAWSApiGatewayImporterTask {
+    AWSApiGatewayImportCreateTask() {
+        super()
+        description = "Imports a ${supportedSpecifications} specification into a new API Gateway REST API."
+    }
+
     @TaskAction
     void importNewApi() {
-        RestApi api = createApi()
+        createApi()
     }
 }

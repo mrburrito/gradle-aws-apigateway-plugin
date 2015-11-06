@@ -1,6 +1,6 @@
 package com.shankyank.gradle.aws.apigateway.specification
 
-import com.shankyank.gradle.aws.apigateway.specification.SpecificationMethod.Operation
+import com.shankyank.gradle.aws.apigateway.model.HttpMethod
 import groovy.transform.Immutable
 import groovy.transform.Memoized
 
@@ -10,7 +10,7 @@ import groovy.transform.Memoized
  * may not have operations and child resources associated with them.
  */
 @Immutable
-class SpecificationResource {
+class SpecificationResource implements Comparable<SpecificationResource> {
     /** The parent of this resource. */
     SpecificationResource parent
 
@@ -18,7 +18,7 @@ class SpecificationResource {
     String name
 
     /** The operations on this resource. */
-    Map<Operation, SpecificationMethod> operations
+    Map<HttpMethod, SpecificationMethod> operations
 
     /** The children of this resource. */
     List<SpecificationResource> children = []
@@ -43,7 +43,12 @@ class SpecificationResource {
      * @return a depth-first search of the resource tree rooted at this resource
      */
     @Memoized
-    List<SpecificationResource> getFlattenedResourceTree() {
-        [ this ] + children?.collectMany { it.flattenedResourceTree }
+    SortedSet<SpecificationResource> getFlattenedResourceTree() {
+        new TreeSet(this) + children?.collectMany { it.flattenedResourceTree }
+    }
+
+    @Override
+    int compareTo(SpecificationResource other) {
+        parent <=> other.parent ?: name <=> other.name
     }
 }

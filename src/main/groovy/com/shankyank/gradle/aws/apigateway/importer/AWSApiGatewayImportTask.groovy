@@ -5,12 +5,13 @@ import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 
 /**
- * Imports a Swagger or RAML specification, creating and/or updating an API Gateway
+ * Imports an API specification, creating and/or updating an API Gateway
  * RestApi.
  */
 class AWSApiGatewayImportTask extends BaseAWSApiGatewayImporterTask {
     AWSApiGatewayImportTask() {
-        description = "Imports a ${supportedSpecifications} specification into an API Gateway REST API."
+        description = "Imports a ${supportedSpecifications} specification into AWS API Gateway, \
+creating the API if it does not exist."
     }
 
     @TaskAction

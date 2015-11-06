@@ -10,7 +10,7 @@ import groovy.util.logging.Slf4j
  */
 @PackageScope
 @Slf4j('logger')
-trait ApiGatewayDecorator {
+trait ApiGatewayContainer {
     /** The AmazonApiGateway client. */
     final AmazonApiGateway apiGateway
 
@@ -29,6 +29,7 @@ trait ApiGatewayDecorator {
         }
     }
 
+
     /**
      * Executes a pageable call to the API Gateway service, iterating over
      * the pages and returning the items found in a single list.
@@ -44,7 +45,7 @@ trait ApiGatewayDecorator {
      * @return the List of all items returned by the pageable request
      */
     List collectPagedResults(final def baseRequest, final Closure getPage) {
-        // using explicit method overridding because traits do not support default arguments
+        // can't use default arguments in trait
         collectPagedResults(baseRequest, getPage, Closure.IDENTITY)
     }
 

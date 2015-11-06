@@ -1,5 +1,6 @@
 package com.shankyank.gradle.aws.apigateway.specification
 
+import com.shankyank.gradle.aws.apigateway.model.HttpMethod
 import groovy.transform.Immutable
 
 /**
@@ -7,33 +8,37 @@ import groovy.transform.Immutable
  */
 @Immutable
 class SpecificationMethod {
-    /**
-     * The operation types for resource methods.
-     */
-    static enum Operation {
-        GET,
-        POST,
-        PUT,
-        DELETE,
-        OPTIONS,
-        PATCH
-    }
+    /** The default authorization type. */
+    static final String DEFAULT_AUTHORIZATION_TYPE = 'NONE'
 
     /** The operation type. */
-    Operation operation
+    HttpMethod operation
 
     /** The authorization type. */
-    String authorizationType
+    String authorizationType = DEFAULT_AUTHORIZATION_TYPE
 
     /** Is an API key required for this operation? */
     boolean apiKeyRequired
 
-    /** The method parameters. */
+    /** The map of content type to request body model. */
+    Map<String, SpecificationModel> bodyModels = [:]
+
+    /** The non-BODY method parameters. */
     List<SpecificationParameter> parameters = []
 
-    /** The method integrations. */
-    List<SpecificationIntegration> requestIntegrations= []
+    /** The request integration. */
+    SpecificationRequestIntegration requestIntegration
 
     /** The method responses. */
     List<SpecificationResponse> responses = []
+
+    /** The response integrations. */
+    List<SpecificationRequestIntegration> responseIntegrations = []
+
+    /**
+     * @return the AWS HttpMethod string
+     */
+    String getAwsHttpMethod() {
+        operation.awsHttpMethod
+    }
 }

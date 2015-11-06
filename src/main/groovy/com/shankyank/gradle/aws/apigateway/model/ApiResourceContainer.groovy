@@ -1,19 +1,17 @@
 package com.shankyank.gradle.aws.apigateway.model
 
-import com.amazonaws.services.apigateway.model.Resource
-
 /**
- * Decorator around an API Gateway Resource.
+ * Models that contain an ApiResource.
  */
-trait ResourceDecorator extends RestApiDecorator {
-    /** The decorated resource. */
-    final Resource resource
+trait ApiResourceContainer extends ApiContainer {
+    /** The ApiResource. */
+    final ApiResource resource
 
     /**
      * @return the resource ID
      */
     String getResourceId() {
-        resource.id
+        resource.resourceId
     }
 
     /**

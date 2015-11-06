@@ -4,8 +4,6 @@ import com.wordnik.swagger.models.Swagger
 import groovy.util.logging.Slf4j
 import io.swagger.parser.SwaggerParser
 import org.gradle.api.GradleException
-import org.raml.model.Raml
-import org.raml.parser.visitor.RamlDocumentBuilder
 
 /**
  * This factory builds ApiSpecification wrappers based on the
@@ -28,15 +26,6 @@ class ApiSpecificationFactory {
             @Override
             String toString() {
                 'Swagger'
-            }
-        },
-        RAML {
-            private def parseSpecification(final File specFile) {
-                new RamlDocumentBuilder().build(specFile.absolutePath)
-            }
-
-            private ApiSpecification createSpecification(final Raml spec, final File specFile) {
-                new RamlApiSpecification(spec, specFile)
             }
         }
 
@@ -82,7 +71,7 @@ class ApiSpecificationFactory {
          * @return the identified SpecificationType
          */
         static SpecificationType forSpecificationFile(final File specFile) {
-            specFile?.name ==~ /(?i)\.raml$/ ? RAML : SWAGGER
+            SWAGGER
         }
     }
 
