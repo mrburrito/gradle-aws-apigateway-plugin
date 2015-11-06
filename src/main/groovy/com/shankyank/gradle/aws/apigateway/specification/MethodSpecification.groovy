@@ -7,7 +7,7 @@ import groovy.transform.Immutable
  * A resource method defined by the specification.
  */
 @Immutable
-class SpecificationMethod {
+class MethodSpecification {
     /** The default authorization type. */
     static final String DEFAULT_AUTHORIZATION_TYPE = 'NONE'
 
@@ -21,19 +21,19 @@ class SpecificationMethod {
     boolean apiKeyRequired
 
     /** The map of content type to request body model. */
-    Map<String, SpecificationModel> bodyModels = [:]
+    Map<String, ModelSpecification> bodyModels = [:]
 
     /** The non-BODY method parameters. */
-    List<SpecificationParameter> parameters = []
+    List<ParameterSpecification> parameters = []
 
     /** The request integration. */
-    SpecificationRequestIntegration requestIntegration
+    RequestIntegrationSpecification requestIntegration
 
     /** The method responses. */
-    List<SpecificationResponse> responses = []
+    List<ResponseSpecification> responses = []
 
     /** The response integrations. */
-    List<SpecificationRequestIntegration> responseIntegrations = []
+    List<RequestIntegrationSpecification> responseIntegrations = []
 
     /**
      * @return the AWS HttpMethod string

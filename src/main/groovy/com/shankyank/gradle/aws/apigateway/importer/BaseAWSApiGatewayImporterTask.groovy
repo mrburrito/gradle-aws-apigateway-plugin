@@ -8,6 +8,7 @@ import com.shankyank.gradle.aws.apigateway.specification.ApiSpecificationFactory
 import com.shankyank.gradle.aws.apigateway.specification.ApiSpecificationFactory.SpecificationType
 import groovy.transform.Memoized
 import groovy.transform.PackageScope
+import org.gradle.api.GradleException
 import org.gradle.api.internal.ConventionTask
 
 /**
@@ -37,9 +38,19 @@ class BaseAWSApiGatewayImporterTask extends ConventionTask {
     protected void updateApi(final String apiId) {
         Api api = apiGateway.getApiById(apiId)
         if (api) {
-            logger.debug("Updating ${api}")
-            api.refreshApi(specification)
+            updateApi(api)
+        } else {
+            throw new GradleException("No API found with ID ${apiId}")
         }
+    }
+
+    /**
+     * Updates an existing Api to match the loaded specification.
+     * @param api the api to update
+     */
+    protected void updateApi(final Api api) {
+        logger.debug("Updating ${api}")
+        api.refreshApi(specification)
     }
 
     /**
@@ -48,7 +59,7 @@ class BaseAWSApiGatewayImporterTask extends ConventionTask {
      */
     @Memoized
     protected final ApiSpecification getSpecification() {
-        ApiSpecificationFactory.createApiSpecification(specificationFile)
+        ApiSpecificationFactory.instance.createApiSpecification(specificationFile)
     }
 
     /**

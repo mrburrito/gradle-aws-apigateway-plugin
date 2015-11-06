@@ -4,10 +4,10 @@ import com.amazonaws.services.apigateway.model.Method
 import com.amazonaws.services.apigateway.model.PutIntegrationRequest
 import com.amazonaws.services.apigateway.model.PutIntegrationResponseRequest
 import com.amazonaws.services.apigateway.model.PutMethodResponseRequest
-import com.shankyank.gradle.aws.apigateway.specification.SpecificationMethod
-import com.shankyank.gradle.aws.apigateway.specification.SpecificationRequestIntegration
-import com.shankyank.gradle.aws.apigateway.specification.SpecificationResponse
-import com.shankyank.gradle.aws.apigateway.specification.SpecificationResponseIntegration
+import com.shankyank.gradle.aws.apigateway.specification.MethodSpecification
+import com.shankyank.gradle.aws.apigateway.specification.RequestIntegrationSpecification
+import com.shankyank.gradle.aws.apigateway.specification.ResponseSpecification
+import com.shankyank.gradle.aws.apigateway.specification.ResponseIntegrationSpecification
 import groovy.transform.Memoized
 
 /**
@@ -24,7 +24,7 @@ class ApiMethod implements ApiResourceContainer {
      * @param method the API Gateway Method to wrap
      * @param specification the specification for this method
      */
-    ApiMethod(final ApiResource resource, final Method method, final SpecificationMethod specification=null) {
+    ApiMethod(final ApiResource resource, final Method method, final MethodSpecification specification=null) {
         this.apiGateway = resource.apiGateway
         this.api = resource.api
         this.resource = resource
@@ -63,7 +63,7 @@ class ApiMethod implements ApiResourceContainer {
      * Create a response for this method according to the specification.
      * @param response the response
      */
-    private void createResponse(final SpecificationResponse response) {
+    private void createResponse(final ResponseSpecification response) {
         debug("Creating Method Response '${name}' => ${response.statusCode}")
         apiGateway.putMethodResponse(new PutMethodResponseRequest(
                 restApiId: apiId,
@@ -79,7 +79,7 @@ class ApiMethod implements ApiResourceContainer {
      * Create the request integration for this method according to the specification.
      * @param integration the request integration
      */
-    private void createRequestIntegration(final SpecificationRequestIntegration integration) {
+    private void createRequestIntegration(final RequestIntegrationSpecification integration) {
         debug("Creating Request Integration for '${name}'")
         apiGateway.putIntegration(new PutIntegrationRequest(
                 restApiId: apiId,
@@ -100,7 +100,7 @@ class ApiMethod implements ApiResourceContainer {
      * Create a response integration for this method according to the specification.
      * @param integration the response integration
      */
-    private void createResponseIntegration(final SpecificationResponseIntegration integration) {
+    private void createResponseIntegration(final ResponseIntegrationSpecification integration) {
         debug("Creating Response Integration /${integration.selectionPattern}/ for " +
                 "'${name}' => ${integration.statusCode}")
         apiGateway.putIntegrationResponse(new PutIntegrationResponseRequest(
@@ -114,7 +114,7 @@ class ApiMethod implements ApiResourceContainer {
         ))
     }
 
-    private Map mapResponseModelsByContentType(final SpecificationResponse response) {
+    private Map mapResponseModelsByContentType(final ResponseSpecification response) {
         response.models.collectEntries { contentType, model ->
             [ (contentType): api.getOrCreateModel(model).name ]
         }

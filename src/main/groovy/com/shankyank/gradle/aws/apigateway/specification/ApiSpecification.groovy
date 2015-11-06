@@ -17,7 +17,7 @@ interface ApiSpecification<T> {
     /**
      * @return the models defined by this specification
      */
-    Collection<SpecificationModel> getModels()
+    Collection<ModelSpecification> getModels()
 
     /**
      * @return the representation of the API
@@ -37,5 +37,5 @@ interface ApiSpecification<T> {
     /**
      * @return the root resource defined by this specification
      */
-    SpecificationResource getRootResource()
+    ResourceSpecification getRootResource()
 }

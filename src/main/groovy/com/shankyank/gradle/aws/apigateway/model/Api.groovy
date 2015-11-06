@@ -10,8 +10,8 @@ import com.amazonaws.services.apigateway.model.Model
 import com.amazonaws.services.apigateway.model.Resource
 import com.amazonaws.services.apigateway.model.RestApi
 import com.shankyank.gradle.aws.apigateway.specification.ApiSpecification
-import com.shankyank.gradle.aws.apigateway.specification.SpecificationModel
-import com.shankyank.gradle.aws.apigateway.specification.SpecificationResource
+import com.shankyank.gradle.aws.apigateway.specification.ModelSpecification
+import com.shankyank.gradle.aws.apigateway.specification.ResourceSpecification
 import groovy.util.logging.Slf4j
 import org.gradle.api.GradleException
 
@@ -107,7 +107,7 @@ class Api implements ApiGatewayContainer {
      * @param model the model to create
      * @return the created model
      */
-    ApiModel createModel(final SpecificationModel model) {
+    ApiModel createModel(final ModelSpecification model) {
         debug("Creating Model '${model.name}'")
         try {
             wrapModel(apiGateway.createModel(new CreateModelRequest(
@@ -128,7 +128,7 @@ class Api implements ApiGatewayContainer {
      * @param model the model specification
      * @return the model
      */
-    ApiModel getOrCreateModel(SpecificationModel model) {
+    ApiModel getOrCreateModel(ModelSpecification model) {
         findModelByName(model.name).orElse(createModel(model))
     }
 
@@ -160,9 +160,9 @@ class Api implements ApiGatewayContainer {
      * Create all resources in the tree rooted at the provided resource.
      * @param rootResource the root of the resource tree to create
      */
-    void createResources(final SpecificationResource rootResource) {
+    void createResources(final ResourceSpecification rootResource) {
         Map<String, ApiResource> resourceCache = resourceMap
-        List<SpecificationResource> flatResourceTree = rootResource.flattenedResourceTree.sort()
+        List<ResourceSpecification> flatResourceTree = rootResource.flattenedResourceTree.sort()
         flatResourceTree.each { resource ->
             if (!resourceCache[resource.path]) {
                 ApiResource created = createResource(resource, resourceCache[resource.parentPath])
@@ -200,7 +200,7 @@ class Api implements ApiGatewayContainer {
      * @param parent the parent resource
      * @return the created resource
      */
-    private ApiResource createResource(final SpecificationResource specification, final ApiResource parent) {
+    private ApiResource createResource(final ResourceSpecification specification, final ApiResource parent) {
         debug("Creating Resource '${specification.path}' with parent ${parent?.resourceId}")
         try {
             ApiResource resource = wrapResource(apiGateway.createResource(new CreateResourceRequest(

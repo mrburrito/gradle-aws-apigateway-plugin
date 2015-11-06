@@ -6,7 +6,7 @@ import groovy.transform.Immutable
  * An API Gateway response integration defined in the specification.
  */
 @Immutable
-class SpecificationResponseIntegration {
+class ResponseIntegrationSpecification {
     /** The selection pattern. */
     String selectionPattern
 

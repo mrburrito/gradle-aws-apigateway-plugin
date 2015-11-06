@@ -10,18 +10,18 @@ import groovy.transform.Memoized
  * may not have operations and child resources associated with them.
  */
 @Immutable
-class SpecificationResource implements Comparable<SpecificationResource> {
+class ResourceSpecification implements Comparable<ResourceSpecification> {
     /** The parent of this resource. */
-    SpecificationResource parent
+    ResourceSpecification parent
 
     /** The name of this resource. */
     String name
 
     /** The operations on this resource. */
-    Map<HttpMethod, SpecificationMethod> operations
+    Map<HttpMethod, MethodSpecification> operations
 
     /** The children of this resource. */
-    List<SpecificationResource> children = []
+    List<ResourceSpecification> children = []
 
     /**
      * @return the path to this resource's parent, separated by '/'
@@ -43,12 +43,12 @@ class SpecificationResource implements Comparable<SpecificationResource> {
      * @return a depth-first search of the resource tree rooted at this resource
      */
     @Memoized
-    SortedSet<SpecificationResource> getFlattenedResourceTree() {
+    SortedSet<ResourceSpecification> getFlattenedResourceTree() {
         new TreeSet(this) + children?.collectMany { it.flattenedResourceTree }
     }
 
     @Override
-    int compareTo(SpecificationResource other) {
+    int compareTo(ResourceSpecification other) {
         parent <=> other.parent ?: name <=> other.name
     }
 }

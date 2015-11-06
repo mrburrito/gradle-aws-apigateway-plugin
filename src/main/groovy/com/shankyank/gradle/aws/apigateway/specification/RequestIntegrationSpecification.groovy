@@ -8,7 +8,7 @@ import groovy.transform.Immutable
  * An API Gateway request integration defined in the specification.
  */
 @Immutable
-class SpecificationRequestIntegration {
+class RequestIntegrationSpecification {
     /** The integration type. */
     IntegrationType type
 

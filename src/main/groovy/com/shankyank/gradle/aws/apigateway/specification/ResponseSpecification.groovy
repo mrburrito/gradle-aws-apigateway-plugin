@@ -7,15 +7,15 @@ import groovy.transform.Memoized
  * A method response defined in the specification.
  */
 @Immutable
-class SpecificationResponse {
+class ResponseSpecification {
     /** The status code. */
     String statusCode
 
     /** The map of content type to response model. */
-    Map<String, SpecificationModel> models = [:]
+    Map<String, ModelSpecification> models = [:]
 
     /** The header parameters. */
-    List<SpecificationParameter> headers = []
+    List<ParameterSpecification> headers = []
 
     /**
      * @return a map of AWS parameter names to required flag

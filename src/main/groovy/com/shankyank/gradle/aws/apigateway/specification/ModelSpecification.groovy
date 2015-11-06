@@ -6,7 +6,7 @@ import groovy.transform.Immutable
  * A model defined by the specification.
  */
 @Immutable
-class SpecificationModel {
+class ModelSpecification {
     /** The name of the model. */
     String name
 

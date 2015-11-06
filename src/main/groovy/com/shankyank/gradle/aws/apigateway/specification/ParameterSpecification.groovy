@@ -7,7 +7,7 @@ import groovy.transform.Immutable
  * A method parameter defined in the specification.
  */
 @Immutable
-class SpecificationParameter {
+class ParameterSpecification {
     /** The parameter location. */
     final ParameterLocation location
 

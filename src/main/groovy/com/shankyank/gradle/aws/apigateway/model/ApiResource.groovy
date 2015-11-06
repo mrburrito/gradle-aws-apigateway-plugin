@@ -5,9 +5,7 @@ import com.amazonaws.services.apigateway.model.Method
 import com.amazonaws.services.apigateway.model.PutMethodRequest
 import com.amazonaws.services.apigateway.model.PutMethodResult
 import com.amazonaws.services.apigateway.model.Resource
-import com.shankyank.gradle.aws.apigateway.specification.SpecificationMethod
-import com.shankyank.gradle.aws.apigateway.specification.SpecificationResource
-import org.gradle.api.GradleException
+import com.shankyank.gradle.aws.apigateway.specification.MethodSpecification
 
 /**
  * Decorator around a Resource.
@@ -70,7 +68,7 @@ class ApiResource implements ApiContainer {
      * @param method the Method specification
      * @return the created ApiMethod
      */
-    ApiMethod createMethod(final SpecificationMethod method) {
+    ApiMethod createMethod(final MethodSpecification method) {
         debug("Creating Method '${method.operation} ${path}'")
         wrapMethod(apiGateway.putMethod(new PutMethodRequest(
                 restApiId: apiId,
@@ -83,23 +81,23 @@ class ApiResource implements ApiContainer {
         )), method)
     }
 
-    private Map<String, Boolean> mapRequestParametersToRequiredFlag(final SpecificationMethod method) {
+    private Map<String, Boolean> mapRequestParametersToRequiredFlag(final MethodSpecification method) {
         method.parameters.collectEntries { parameter ->
             [ (parameter.awsRequestParameterName): parameter.required ]
         }
     }
 
-    private Map mapRequestModelsByContentType(final SpecificationMethod method) {
+    private Map mapRequestModelsByContentType(final MethodSpecification method) {
         method.bodyModels.collectEntries { contentType, model ->
             [ (contentType): api.getOrCreateModel(model).name ]
         }
     }
 
-    private ApiMethod wrapMethod(final Method method, final SpecificationMethod specification=null) {
+    private ApiMethod wrapMethod(final Method method, final MethodSpecification specification=null) {
         method?.with { new ApiMethod(this, it, specification) }
     }
 
-    private ApiMethod wrapMethod(final PutMethodResult method, final SpecificationMethod specification=null) {
+    private ApiMethod wrapMethod(final PutMethodResult method, final MethodSpecification specification=null) {
         wrapMethod(method?.with {
             new Method(
                     httpMethod: httpMethod,
