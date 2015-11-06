@@ -1,6 +1,5 @@
 package com.shankyank.gradle.aws.apigateway.importer
 
-import com.amazonaws.services.apigateway.model.RestApi
 import org.gradle.api.tasks.TaskAction
 
 /**

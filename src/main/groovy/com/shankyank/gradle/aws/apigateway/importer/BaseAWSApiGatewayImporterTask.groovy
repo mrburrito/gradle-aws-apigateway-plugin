@@ -8,7 +8,6 @@ import com.shankyank.gradle.aws.apigateway.specification.ApiSpecificationFactory
 import com.shankyank.gradle.aws.apigateway.specification.ApiSpecificationFactory.SpecificationType
 import groovy.transform.Memoized
 import groovy.transform.PackageScope
-import org.gradle.api.GradleException
 import org.gradle.api.internal.ConventionTask
 
 /**
@@ -29,19 +28,6 @@ class BaseAWSApiGatewayImporterTask extends ConventionTask {
      */
     protected Api createApi() {
         apiGateway.createApi(specification)
-    }
-
-    /**
-     * Updates an existing RestApi to match the loaded specification.
-     * @param api the api to update
-     */
-    protected void updateApi(final String apiId) {
-        Api api = apiGateway.getApiById(apiId)
-        if (api) {
-            updateApi(api)
-        } else {
-            throw new GradleException("No API found with ID ${apiId}")
-        }
     }
 
     /**
