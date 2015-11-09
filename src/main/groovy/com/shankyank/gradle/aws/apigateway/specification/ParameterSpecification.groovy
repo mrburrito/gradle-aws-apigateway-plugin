@@ -17,12 +17,16 @@ class ParameterSpecification {
     /** Is this parameter required? */
     final boolean required
 
-    @Override
+    /**
+     * @return the parameter name as it appears in an AWS request integration
+     */
     String getAwsRequestParameterName() {
         "method.request.${location.awsName}.${name}"
     }
 
-    @Override
+    /**
+     * @return the parameter name as it appears in an AWS response integration
+     */
     String getAwsResponseParameterName() {
         if (location != ParameterLocation.HEADER) {
             throw new UnsupportedParameterLocation(

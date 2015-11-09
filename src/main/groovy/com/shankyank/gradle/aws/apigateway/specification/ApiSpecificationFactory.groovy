@@ -16,11 +16,13 @@ class ApiSpecificationFactory {
     @Slf4j
     static enum SpecificationType {
         SWAGGER {
-            private def parseSpecification(final File specFile) {
+            @Override
+            private Object parseSpecification(final File specFile) {
                 new SwaggerParser().read(specFile.absolutePath)
             }
 
-            private ApiSpecification createSpecification(final Swagger spec, final File specFile) {
+            @Override
+            private ApiSpecification createSpecification(final Object spec, final File specFile) {
                 new SwaggerApiSpecification(spec, specFile)
             }
 
@@ -35,7 +37,7 @@ class ApiSpecificationFactory {
          * @param specFile the specification file
          * @return a parsed specification
          */
-        private abstract def parseSpecification(final File specFile)
+        private abstract Object parseSpecification(final File specFile)
 
         /**
          * Create an ApiSpecification wrapper for this type of specification.
@@ -43,7 +45,7 @@ class ApiSpecificationFactory {
          * @param specFile the specification file
          * @return an appropriate ApiSpecification
          */
-        private abstract <T> ApiSpecification<T> createSpecification(final T specification, final File specFile)
+        private abstract ApiSpecification createSpecification(final Object specification, final File specFile)
 
         /**
          * Parse the specification file, returning a wrapped ApiSpecification.

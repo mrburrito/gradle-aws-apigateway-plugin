@@ -26,6 +26,7 @@ dependencies {
     compile 'jp.classmethod.aws:gradle-aws-plugin:0.22'
     compile 'io.swagger:swagger-core:1.5.0'
     compile 'io.swagger:swagger-parser:1.0.7'
+    compile 'com.github.fge:json-schema-validator:2.2.+'
 }
 
 idea {
