@@ -1,18 +1,18 @@
 package com.shankyank.gradle.aws.apigateway.specification
 
 import com.shankyank.gradle.aws.apigateway.model.HttpMethod
-import groovy.transform.Immutable
+import groovy.transform.Canonical
 
 /**
  * A resource method defined by the specification.
  */
-@Immutable
+@Canonical
 class MethodSpecification {
     /** The default authorization type. */
     static final String DEFAULT_AUTHORIZATION_TYPE = 'NONE'
 
-    /** The operation type. */
-    HttpMethod operation
+    /** The HTTP method. */
+    HttpMethod httpMethod
 
     /** The authorization type. */
     String authorizationType = DEFAULT_AUTHORIZATION_TYPE
@@ -33,12 +33,12 @@ class MethodSpecification {
     List<ResponseSpecification> responses = []
 
     /** The response integrations. */
-    List<RequestIntegrationSpecification> responseIntegrations = []
+    List<ResponseIntegrationSpecification> responseIntegrations = []
 
     /**
      * @return the AWS HttpMethod string
      */
     String getAwsHttpMethod() {
-        operation.awsHttpMethod
+        httpMethod.awsHttpMethod
     }
 }

@@ -1,12 +1,12 @@
 package com.shankyank.gradle.aws.apigateway.specification
 
-import groovy.transform.Immutable
+import groovy.transform.Canonical
 import groovy.transform.Memoized
 
 /**
  * A method response defined in the specification.
  */
-@Immutable
+@Canonical
 class ResponseSpecification {
     /** The status code. */
     String statusCode

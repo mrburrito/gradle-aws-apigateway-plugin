@@ -69,7 +69,7 @@ class ApiResource implements ApiContainer {
      * @return the created ApiMethod
      */
     ApiMethod createMethod(final MethodSpecification method) {
-        debug("Creating Method '${method.operation} ${path}'")
+        debug("Creating Method '${method.httpMethod} ${path}'")
         wrapMethod(apiGateway.putMethod(new PutMethodRequest(
                 restApiId: apiId,
                 resourceId: resourceId,

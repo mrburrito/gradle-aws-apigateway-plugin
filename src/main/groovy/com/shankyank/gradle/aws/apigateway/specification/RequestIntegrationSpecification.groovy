@@ -2,12 +2,12 @@ package com.shankyank.gradle.aws.apigateway.specification
 
 import com.amazonaws.services.apigateway.model.IntegrationType
 import com.shankyank.gradle.aws.apigateway.model.HttpMethod
-import groovy.transform.Immutable
+import groovy.transform.Canonical
 
 /**
  * An API Gateway request integration defined in the specification.
  */
-@Immutable
+@Canonical
 class RequestIntegrationSpecification {
     /** The integration type. */
     IntegrationType type

@@ -1,12 +1,12 @@
 package com.shankyank.gradle.aws.apigateway.specification
 
 import com.shankyank.gradle.aws.apigateway.model.ParameterLocation
-import groovy.transform.Immutable
+import groovy.transform.Canonical
 
 /**
  * A method parameter defined in the specification.
  */
-@Immutable
+@Canonical
 class ParameterSpecification {
     /** The parameter location. */
     final ParameterLocation location

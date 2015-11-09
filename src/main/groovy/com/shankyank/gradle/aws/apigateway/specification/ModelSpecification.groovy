@@ -1,11 +1,11 @@
 package com.shankyank.gradle.aws.apigateway.specification
 
-import groovy.transform.Immutable
+import groovy.transform.Canonical
 
 /**
  * A model defined by the specification.
  */
-@Immutable
+@Canonical
 class ModelSpecification {
     /** The name of the model. */
     String name

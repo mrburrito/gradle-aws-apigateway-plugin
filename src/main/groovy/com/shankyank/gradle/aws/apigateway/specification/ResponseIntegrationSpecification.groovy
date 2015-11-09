@@ -1,11 +1,11 @@
 package com.shankyank.gradle.aws.apigateway.specification
 
-import groovy.transform.Immutable
+import groovy.transform.Canonical
 
 /**
  * An API Gateway response integration defined in the specification.
  */
-@Immutable
+@Canonical
 class ResponseIntegrationSpecification {
     /** The selection pattern. */
     String selectionPattern
