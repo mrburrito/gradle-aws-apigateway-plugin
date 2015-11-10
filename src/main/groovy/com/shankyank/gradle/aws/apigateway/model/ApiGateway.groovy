@@ -32,7 +32,7 @@ class ApiGateway implements ApiGatewayContainer {
      */
     List<Api> findApisByName(final String name) {
         collectPagedResults(new GetRestApisRequest(), apiGateway.&getRestApis) {
-            it.getApiName == name
+            it.name == name
         }.collect(this.&wrapApi)
     }
 

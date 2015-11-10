@@ -21,14 +21,15 @@ creating the API if it does not exist."
         switch (namedApis.size()) {
             case 0:
                 logger.info("No API named '${specification.name}' found, creating.")
-                createApi(specification)
+                createApi()
                 break
             case 1:
                 logger.info("Updating ${namedApis[0]}")
-                updateApi(namedApis[0], specification)
+                updateApi(namedApis[0])
                 break
             default:
-                throw new GradleException("Found ${namedApis.size()} APIs named '${specification.name}. \
+                logger.info("Found ${namedApis.size()} APIs named '${specification.name}: ${namedApis}")
+                throw new GradleException("Found ${namedApis.size()} APIs named '${specification.name}'. \
 Use AWSApiGatewayImportCreateTask or AWSApiGatewayImportUpdateTask instead.")
         }
     }

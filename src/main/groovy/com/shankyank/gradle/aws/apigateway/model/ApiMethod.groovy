@@ -1,5 +1,6 @@
 package com.shankyank.gradle.aws.apigateway.model
 
+import com.amazonaws.services.apigateway.model.DeleteMethodRequest
 import com.amazonaws.services.apigateway.model.Method
 import com.amazonaws.services.apigateway.model.PutIntegrationRequest
 import com.amazonaws.services.apigateway.model.PutIntegrationResponseRequest
@@ -57,6 +58,18 @@ class ApiMethod implements ApiResourceContainer {
     @Memoized
     String getName() {
         "${operation} ${resourcePath}"
+    }
+
+    /**
+     * Delete this method.
+     */
+    void delete() {
+        debug("Deleting Method '${name}'")
+        apiGateway.deleteMethod(new DeleteMethodRequest(
+                restApiId: apiId,
+                resourceId: resourceId,
+                httpMethod: awsHttpMethod
+        ))
     }
 
     /**

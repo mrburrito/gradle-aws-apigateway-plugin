@@ -84,6 +84,6 @@ class ApiSpecificationFactory {
      * @return the ApiSpecification loaded from the specFile
      */
     ApiSpecification createApiSpecification(final File specFile) {
-        SpecificationType.forSpecificationFile(specFile).createSpecification(specFile)
+        SpecificationType.forSpecificationFile(specFile).parseSpecificationFile(specFile)
     }
 }

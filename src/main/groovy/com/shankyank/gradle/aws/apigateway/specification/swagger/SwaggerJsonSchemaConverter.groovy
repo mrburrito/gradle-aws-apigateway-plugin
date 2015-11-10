@@ -34,10 +34,13 @@ class SwaggerJsonSchemaConverter implements SchemaConverter {
     private ObjectMapper mapper
 
     SwaggerJsonSchemaConverter(Map<String, Object> models) {
-        this.models = models?.collectEntries { name, model ->
-            [ (name): new ResolvedSchema(name, model) ]
-        } ?: [:]
         mapper = new ObjectMapper()
+        this.models = models?.collectEntries { name, model ->
+            if (log.debugEnabled) {
+                log.debug("Creating ResolvedSchema for [ ${name}: ${mapper.writeValueAsString(model)} ]")
+            }
+            [ (name): new ResolvedSchema(this, name, model) ]
+        } ?: [:]
     }
 
     @Override
@@ -52,7 +55,7 @@ class SwaggerJsonSchemaConverter implements SchemaConverter {
 
     @Override
     String generateSchemaForModel(final String name, final Object model) {
-        new ResolvedSchema(name, model).jsonSchema
+        new ResolvedSchema(this, name, model).jsonSchema
     }
 
     /**
@@ -129,7 +132,10 @@ class SwaggerJsonSchemaConverter implements SchemaConverter {
         }
     }
 
-    private class ResolvedSchema {
+    private static class ResolvedSchema {
+        /** The owner of this schema. */
+        private final SwaggerJsonSchemaConverter schemaConverter
+
         /** The name of this schema. */
         final String name
 
@@ -139,12 +145,13 @@ class SwaggerJsonSchemaConverter implements SchemaConverter {
         /** The names of the dependent schema for this schema. */
         final Set<String> dependencies
 
-        ResolvedSchema(final String name, final Object model) {
+        ResolvedSchema(final SwaggerJsonSchemaConverter schemaConverter, final String name, final Object model) {
+            this.schemaConverter = schemaConverter
             this.name = name
-            jsonModel = toJsonNode(model)
+            jsonModel = schemaConverter.toJsonNode(model)
             Set deps = [] as Set
             findReferences(jsonModel).each { ref, parent ->
-                String schemaName = getReferenceSchemaName(ref.textValue())
+                String schemaName = getReferenceSchemaName(ref)
                 deps << schemaName
                 parent.set(REFERENCE, new TextNode(getInlineSchemaReference(schemaName)))
             }
@@ -170,13 +177,13 @@ class SwaggerJsonSchemaConverter implements SchemaConverter {
             } else {
                 log.info("Generated JsonSchema for Model ${name}: ${toJsonString(flatSchema)}")
             }
-            toJsonString(flatSchema)
+            schemaConverter.toJsonString(flatSchema)
         }
 
         @Memoized
         private Map<String, ResolvedSchema> getResolvedDependencies() {
             dependencies.collectEntries { name ->
-                models[name]?.with { [ (name): it ] + it.resolvedDependencies }
+                schemaConverter.models[name]?.with { [ (name): it ] + it.resolvedDependencies }
             }
         }
 

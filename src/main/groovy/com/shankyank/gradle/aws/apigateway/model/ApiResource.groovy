@@ -6,16 +6,18 @@ import com.amazonaws.services.apigateway.model.PutMethodRequest
 import com.amazonaws.services.apigateway.model.PutMethodResult
 import com.amazonaws.services.apigateway.model.Resource
 import com.shankyank.gradle.aws.apigateway.specification.MethodSpecification
+import groovy.util.logging.Slf4j
 
 /**
  * Decorator around a Resource.
  */
+@Slf4j('logger')
 class ApiResource implements ApiContainer {
     /** The decorated Resource. */
     private final Resource resource
 
     ApiResource(final Api api, final Resource resource) {
-        this.apiGateway = apiGateway
+        this.apiGateway = api.apiGateway
         this.api = api
         this.resource = resource
     }
@@ -38,20 +40,25 @@ class ApiResource implements ApiContainer {
      * Delete this resource.
      */
     void delete() {
-        debug("Deleting Resource '${path}'")
-        apiGateway.deleteResource(new DeleteResourceRequest(
-                restApiId: apiId,
-                resourceId: resourceId
-        ))
+        if (rootResource) {
+            debug("Deleting methods on Root Resource '${path}'")
+            methods.values().each { it.delete() }
+        } else {
+            debug("Deleting Resource '${path}'")
+            apiGateway.deleteResource(new DeleteResourceRequest(
+                    restApiId: apiId,
+                    resourceId: resourceId
+            ))
+        }
     }
 
     /**
      * @return the map of HttpOp to ApiMethod for this resource
      */
     Map getMethods() {
-        resource.resourceMethods.collectEntries { op, method ->
+        resource.resourceMethods?.collectEntries { op, method ->
             [ (HttpMethod.fromAwsHttpMethod(op)): wrapMethod(method) ]
-        }
+        } ?: [:]
     }
 
     /**
@@ -79,6 +86,13 @@ class ApiResource implements ApiContainer {
                 requestModels: mapRequestModelsByContentType(method),
                 requestParameters: mapRequestParametersToRequiredFlag(method)
         )), method)
+    }
+
+    /**
+     * @return true if this is the root resource
+     */
+    boolean isRootResource() {
+        !path || path == '/'
     }
 
     private Map<String, Boolean> mapRequestParametersToRequiredFlag(final MethodSpecification method) {

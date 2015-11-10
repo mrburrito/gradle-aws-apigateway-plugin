@@ -101,7 +101,7 @@ class Api implements ApiGatewayContainer {
      * @return the models found in this API
      */
     List<ApiModel> getModels() {
-        collectPagedResults(new GetModelsRequest(restApiId: apiId), apiGateway.&getModels).collect(this.&toApiModel)
+        collectPagedResults(new GetModelsRequest(restApiId: apiId), apiGateway.&getModels).collect(this.&wrapModel)
     }
 
     /**
@@ -150,7 +150,7 @@ class Api implements ApiGatewayContainer {
      * @return the Resources in this API
      */
     List<ApiResource> getResources() {
-        collectPagedResults(new GetResourcesRequest(restApiId: apiId).putCustomQueryParameter('embed', 'true'),
+        collectPagedResults(new GetResourcesRequest(restApiId: apiId),
                 apiGateway.&getResources).collect(this.&wrapResource)
     }
 

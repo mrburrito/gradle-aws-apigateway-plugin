@@ -20,7 +20,7 @@ class SwaggerApiSpecification implements ApiSpecification<Swagger> {
     /** The input file. */
     final File specificationFile
 
-    SwaggerApiSpecification(Swagger specification, File specificationFile, ResourceSpecification rootResource) {
+    SwaggerApiSpecification(Swagger specification, File specificationFile) {
         this.specification = specification
         this.specificationFile = specificationFile
     }
@@ -101,6 +101,7 @@ class SwaggerApiSpecification implements ApiSpecification<Swagger> {
     @Memoized
     @PackageScope
     SchemaConverter getSchemaConverter() {
+        log.debug("Creating SchemaConverter for ${specification.definitions}")
         new SwaggerJsonSchemaConverter(specification.definitions)
     }
 

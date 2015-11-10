@@ -10,7 +10,7 @@ import groovy.util.logging.Slf4j
 @Slf4j('logger')
 trait ApiContainer extends ApiGatewayContainer {
     /** The Api. */
-    final Api api
+    Api api
 
     /**
      * @return the API id
