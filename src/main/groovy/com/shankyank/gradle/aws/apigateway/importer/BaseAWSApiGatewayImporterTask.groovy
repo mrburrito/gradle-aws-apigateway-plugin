@@ -1,21 +1,21 @@
 package com.shankyank.gradle.aws.apigateway.importer
 
-import com.shankyank.gradle.aws.apigateway.AWSApiGatewayPluginExtension
+import com.shankyank.gradle.aws.apigateway.BaseAWSApiGatewayTask
 import com.shankyank.gradle.aws.apigateway.model.Api
-import com.shankyank.gradle.aws.apigateway.model.ApiGateway
 import com.shankyank.gradle.aws.apigateway.specification.ApiSpecification
 import com.shankyank.gradle.aws.apigateway.specification.ApiSpecificationFactory
 import com.shankyank.gradle.aws.apigateway.specification.ApiSpecificationFactory.SpecificationType
 import groovy.transform.Memoized
 import groovy.transform.PackageScope
-import org.gradle.api.internal.ConventionTask
+import org.gradle.api.tasks.InputFile
 
 /**
  * Base class for tasks that import a specification file into API Gateway.
  */
 @PackageScope
-class BaseAWSApiGatewayImporterTask extends ConventionTask {
-    /** The specification file */
+class BaseAWSApiGatewayImporterTask extends BaseAWSApiGatewayTask {
+    /** The specification files */
+    @InputFile
     File specificationFile
 
     protected BaseAWSApiGatewayImporterTask() {
@@ -49,27 +49,11 @@ class BaseAWSApiGatewayImporterTask extends ConventionTask {
     }
 
     /**
-     * @return the defined plugin extension
-     */
-    @Memoized
-    protected final AWSApiGatewayPluginExtension getPluginExtension() {
-        extensions.findByType(AWSApiGatewayPluginExtension)
-    }
-
-    /**
-     * @return an AmazonApiGateway client
-     */
-    @Memoized
-    protected final ApiGateway getApiGateway() {
-        new ApiGateway(pluginExtension.apiGateway)
-    }
-
-    /**
      * @return the list of supported specifications as a joined string
      */
     @Memoized
     protected final String getSupportedSpecifications() {
-        List types = [] + SpecificationType.values()
+        List types = [] + (SpecificationType.values() as List)
         SpecificationType last = types.last()
         types -= last
         "${types.join(', ')}${types.empty ? '' : ' or '}${last}"

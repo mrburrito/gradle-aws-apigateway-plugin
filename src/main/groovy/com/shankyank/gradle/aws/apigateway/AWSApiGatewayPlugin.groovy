@@ -1,6 +1,5 @@
 package com.shankyank.gradle.aws.apigateway
 
-import jp.classmethod.aws.gradle.AwsPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -10,7 +9,8 @@ import org.gradle.api.Project
 class AWSApiGatewayPlugin implements Plugin<Project> {
     @Override
     void apply(final Project project) {
-        project.pluginManager.apply(AwsPlugin)
-        project.extensions.create('apigateway', AWSApiGatewayPluginExtension, project)
+        project.logger.info("Applying AWSApiGatewayPlugin")
+        project.extensions.create(AWSApiGatewayPluginExtension.NAME, AWSApiGatewayPluginExtension, project)
+        project.task('listApis', type: AWSApiGatewayListTask)
     }
 }

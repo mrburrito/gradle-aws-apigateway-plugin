@@ -1,12 +1,14 @@
 group 'com.shankyank.gradle'
-version '1.0-SNAPSHOT'
+version '0.1-SNAPSHOT'
 
 apply plugin: 'groovy'
+apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 
 repositories {
+    mavenLocal()
     mavenCentral()
     jcenter()
 }
@@ -15,6 +17,8 @@ publishing {
     publications {
         plugin(MavenPublication) {
             from components.java
+            artifact sourceJar
+            artifact javadocJar
         }
     }
 }
@@ -23,10 +27,25 @@ dependencies {
     compile gradleApi()
     compile localGroovy()
     compile 'com.amazonaws:aws-java-sdk-api-gateway:1.10.+'
-    compile 'jp.classmethod.aws:gradle-aws-plugin:0.22'
     compile 'io.swagger:swagger-core:1.5.0'
     compile 'io.swagger:swagger-parser:1.0.7'
     compile 'com.github.fge:json-schema-validator:2.2.+'
+}
+
+task sourceJar(type: Jar, dependsOn: classes) {
+    classifier = 'src'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives jar
+    archives sourceJar
+    archives javadocJar
 }
 
 idea {

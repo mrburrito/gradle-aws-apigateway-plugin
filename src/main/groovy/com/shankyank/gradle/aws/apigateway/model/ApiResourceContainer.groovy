@@ -5,7 +5,7 @@ package com.shankyank.gradle.aws.apigateway.model
  */
 trait ApiResourceContainer extends ApiContainer {
     /** The ApiResource. */
-    final ApiResource resource
+    ApiResource resource
 
     /**
      * @return the resource ID

@@ -12,7 +12,7 @@ import groovy.util.logging.Slf4j
 @Slf4j('logger')
 trait ApiGatewayContainer {
     /** The AmazonApiGateway client. */
-    final AmazonApiGateway apiGateway
+    AmazonApiGateway apiGateway
 
     /**
      * Executes an API Gateway request that can trigger a NotFoundException,
@@ -67,13 +67,29 @@ trait ApiGatewayContainer {
      * @return the List of all items returned by the pageable request
      */
     List collectPagedResults(final def baseRequest, final Closure getPage, final Closure filter) {
-        def result = getPage(baseRequest)
+        logger.info("Collecting paged results with base request: ${baseRequest}")
+        def logPage = { page ->
+            if (logger.debugEnabled) {
+                logger.debug("Next Page contains ${page?.items?.size() ?: 0} Results:")
+                page?.items?.each { logger.debug("\t${it}") }
+            }
+        }
+        def result
         def nextPage = {
-            result.position ? getPage(baseRequest.withPosition(result.position)) : null
+            logger.debug("Next page starts at position: ${result?.position}")
+            def page = !result || result.position ? getPage(baseRequest.withPosition(result?.position)) : null
+            logPage(page)
+            page
         }
         List results = []
         while ((result = nextPage())?.items) {
-            results += result.items.findAll(filter)
+            def filtered = result.items.findAll(filter)
+            logger.debug("Found ${filtered.size()} results matching filter")
+            results += filtered
+        }
+        logger.info("Found ${results.size()} Results")
+        if (logger.debugEnabled) {
+            logger.debug("Collected Results:\n\t${results.join('\n\t')}")
         }
         results
     }

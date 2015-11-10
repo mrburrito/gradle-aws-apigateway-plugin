@@ -17,12 +17,12 @@ class ApiSpecificationFactory {
     static enum SpecificationType {
         SWAGGER {
             @Override
-            private Object parseSpecification(final File specFile) {
+            protected Object parseSpecification(final File specFile) {
                 new SwaggerParser().read(specFile.absolutePath)
             }
 
             @Override
-            private ApiSpecification createSpecification(final Object spec, final File specFile) {
+            protected ApiSpecification createSpecification(final Object spec, final File specFile) {
                 new SwaggerApiSpecification(spec, specFile)
             }
 
@@ -37,7 +37,7 @@ class ApiSpecificationFactory {
          * @param specFile the specification file
          * @return a parsed specification
          */
-        private abstract Object parseSpecification(final File specFile)
+        protected abstract Object parseSpecification(final File specFile)
 
         /**
          * Create an ApiSpecification wrapper for this type of specification.
@@ -45,7 +45,7 @@ class ApiSpecificationFactory {
          * @param specFile the specification file
          * @return an appropriate ApiSpecification
          */
-        private abstract ApiSpecification createSpecification(final Object specification, final File specFile)
+        protected abstract ApiSpecification createSpecification(final Object specification, final File specFile)
 
         /**
          * Parse the specification file, returning a wrapped ApiSpecification.
@@ -56,7 +56,7 @@ class ApiSpecificationFactory {
             log.info("Reading ${this} specification from ${specFile.absolutePath}")
             def spec = parseSpecification(specFile)
             if (spec) {
-                createSpecification(specFile).with {
+                createSpecification(spec, specFile).with {
                     if (log.debugEnabled) {
                         log.debug("Parsed ${this} specification '${name}' with ${resourceCount} resources " +
                                 "and ${modelCount} models")

@@ -43,6 +43,20 @@ class Api implements ApiGatewayContainer {
     }
 
     /**
+     * @return the description of the contained API
+     */
+    String getApiDescription() {
+        restApi.description
+    }
+
+    /**
+     * @return the created date of the contained API
+     */
+    Date getApiCreatedDate() {
+        restApi.createdDate.clone()
+    }
+
+    /**
      * Refreshes the API, clearing any previously defined models and resources before
      * populating the API based on the provided specification.
      * @param specficiation the API specification

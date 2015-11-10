@@ -5,7 +5,7 @@ package com.shankyank.gradle.aws.apigateway.model
  */
 trait ApiMethodContainer extends ApiResourceContainer {
     /** The ApiMethod. */
-    final ApiMethod method
+    ApiMethod method
 
     /**
      * @return the method operation
