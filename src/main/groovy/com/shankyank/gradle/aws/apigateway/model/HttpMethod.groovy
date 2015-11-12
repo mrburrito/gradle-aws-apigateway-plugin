@@ -15,7 +15,7 @@ enum HttpMethod {
      * @return the AWS httpMethod name
      */
     String getAwsHttpMethod() {
-        name().toLowerCase()
+        name()//.toLowerCase()
     }
 
     /**

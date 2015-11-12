@@ -41,8 +41,7 @@ class ApiResource implements ApiContainer {
      */
     void delete() {
         if (rootResource) {
-            debug("Deleting methods on Root Resource '${resourceId}: ${path}'")
-            methods.values().each { it.delete() }
+            clearMethods()
         } else {
             debug("Deleting Resource '${resourceId}: ${path}'")
             apiGateway.deleteResource(new DeleteResourceRequest(
@@ -50,6 +49,14 @@ class ApiResource implements ApiContainer {
                     resourceId: resourceId
             ))
         }
+    }
+
+    /**
+     * Clear the methods from this resource.
+     */
+    void clearMethods() {
+        debug("Clearing methods from Resource '${resourceId}: ${path}'")
+        methods.values().each { it.delete() }
     }
 
     /**
@@ -76,7 +83,7 @@ class ApiResource implements ApiContainer {
      * @return the created ApiMethod
      */
     ApiMethod createMethod(final MethodSpecification method) {
-        debug("Creating Method '${method.httpMethod} ${path}'")
+        info("Creating Method '${method.httpMethod} ${path}'")
         wrapMethod(apiGateway.putMethod(new PutMethodRequest(
                 restApiId: apiId,
                 resourceId: resourceId,

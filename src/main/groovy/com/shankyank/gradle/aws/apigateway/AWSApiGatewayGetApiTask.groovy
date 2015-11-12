@@ -1,5 +1,6 @@
 package com.shankyank.gradle.aws.apigateway
 
+import com.shankyank.gradle.aws.apigateway.model.Api
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 
@@ -15,8 +16,7 @@ class AWSApiGatewayGetApiTask extends BaseAWSApiGatewayTask {
         if (!id) {
             throw new GradleException("API ID must be provided")
         }
-        apiGateway.getApiById(id).with { opt ->
-            println "API[${id}]: ${opt ? opt.get() : 'Not Found'}"
-        }
+        Api api = apiGateway.getApiById(id)
+        println "API[${id}]: ${api ?: 'Not Found'}"
     }
 }

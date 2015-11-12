@@ -41,9 +41,9 @@ class ApiGateway implements ApiGatewayContainer {
      * @param apiId the ID of the API
      * @return the target API
      */
-    Optional<Api> getApiById(final String apiId) {
+    Api getApiById(final String apiId) {
         logger.debug("Retrieving RestApi ${apiId}")
-        findOptionalObject {
+        findNullableObject {
             wrapApi(apiGateway.getRestApi(new GetRestApiRequest(restApiId: apiId)))
         }
     }

@@ -28,7 +28,7 @@ creating the API if it does not exist."
                 updateApi(namedApis[0])
                 break
             default:
-                logger.info("Found ${namedApis.size()} APIs named '${specification.name}: ${namedApis}")
+                logger.error("Found ${namedApis.size()} APIs named '${specification.name}:\n\t${namedApis.join('\n\t')}")
                 throw new GradleException("Found ${namedApis.size()} APIs named '${specification.name}'. \
 Use AWSApiGatewayImportCreateTask or AWSApiGatewayImportUpdateTask instead.")
         }

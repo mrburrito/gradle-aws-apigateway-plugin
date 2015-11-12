@@ -6,6 +6,7 @@ import com.amazonaws.services.apigateway.model.CreateResourceRequest
 import com.amazonaws.services.apigateway.model.DeleteRestApiRequest
 import com.amazonaws.services.apigateway.model.GetModelRequest
 import com.amazonaws.services.apigateway.model.GetModelsRequest
+import com.amazonaws.services.apigateway.model.GetResourceRequest
 import com.amazonaws.services.apigateway.model.GetResourcesRequest
 import com.amazonaws.services.apigateway.model.Model
 import com.amazonaws.services.apigateway.model.Resource

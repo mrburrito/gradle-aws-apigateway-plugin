@@ -16,19 +16,18 @@ trait ApiGatewayContainer {
 
     /**
      * Executes an API Gateway request that can trigger a NotFoundException,
-     * returning an empty Optional instead of throwing the exception.
+     * returning null instead of throwing the exception.
      * @param query the query to execute
      * @return the query result
      */
-    Optional findOptionalObject(final Closure query) {
+    public <T> T findNullableObject(final Closure<T> query) {
         try {
-            Optional.ofNullable(query())
+            query()
         } catch (NotFoundException ex) {
             logger.debug("Requested object not found: ${ex.message}")
-            Optional.empty()
+            null
         }
     }
-
 
     /**
      * Executes a pageable call to the API Gateway service, iterating over

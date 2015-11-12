@@ -9,7 +9,7 @@ import org.gradle.api.DefaultTask
  */
 abstract class BaseAWSApiGatewayTask extends DefaultTask {
     protected BaseAWSApiGatewayTask() {
-        group = 'aws: apigateway'
+        group = 'AWS: API Gateway'
     }
 
     /**
