@@ -16,7 +16,7 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class SwaggerResourceSpecificationBuilder {
     /** The resource path separator. */
-    static final char RESOURCE_PATH_SEPARATOR = '/'
+    static final String RESOURCE_PATH_SEPARATOR = '/'
 
     /** The Swagger API specification. */
     final SwaggerApiSpecification api
@@ -44,7 +44,7 @@ class SwaggerResourceSpecificationBuilder {
     private void populateResourceTree() {
         swagger.paths.each { pathName, path ->
             String fullPathName = getFullResourcePath(pathName)
-            ensureResourcesOnPathExist(fullPathName)
+            rootResource.ensureAllResourcesOnPathExist(fullPathName)
             addMethodsToResource(rootResource[fullPathName], path)
         }
     }
@@ -63,22 +63,8 @@ class SwaggerResourceSpecificationBuilder {
      * @param path the input path
      * @return the cleaned path
      */
-    private CharSequence cleanPathSeparators(final CharSequence path) {
+    private String cleanPathSeparators(final String path) {
         path.replaceAll(/\/+/, '/').replaceAll(/\/$/, '')
-    }
-
-    /**
-     * Ensures all resources along a provided path have been created, adding
-     * empty ResourceSpecifications to the tree for any missing paths.
-     * @param path the path to the target resource
-     */
-    private void ensureResourcesOnPathExist(final String path) {
-        List pathParts = getPathParts(path)
-        pathParts.eachWithIndex { name, index ->
-            if (resourceDoesNotExist(buildPartialPath(pathParts, index))) {
-                createEmptyResource(buildPartialPath(pathParts, index-1), name)
-            }
-        }
     }
 
     /**
@@ -97,7 +83,7 @@ class SwaggerResourceSpecificationBuilder {
      * @return the path to the target resource
      */
     private String buildPartialPath(final List pathParts, final int targetIndex) {
-        pathParts[0..targetIndex].join(RESOURCE_PATH_SEPARATOR)
+        pathParts[0..<targetIndex].join(RESOURCE_PATH_SEPARATOR)
     }
 
     /**
@@ -106,7 +92,14 @@ class SwaggerResourceSpecificationBuilder {
      * @return true if the resource exists
      */
     private boolean resourceDoesNotExist(final String path) {
-        !rootResource[path]
+        ResourceSpecification spec = rootResource[path]
+        if (spec) {
+            log.debug("Found Resource[{$spec.path}] for path '${path}'")
+            false
+        } else {
+            log.debug("Resource not found at path '${path}'")
+            true
+        }
     }
 
     /**
@@ -139,7 +132,7 @@ class SwaggerResourceSpecificationBuilder {
      * @return the Operation for the specified method
      */
     private Operation getOperationForMethod(final Path path, final HttpMethod httpMethod) {
-        path?."${httpMethod}"
+        path?."${httpMethod.toString().toLowerCase()}"
     }
 
     /**

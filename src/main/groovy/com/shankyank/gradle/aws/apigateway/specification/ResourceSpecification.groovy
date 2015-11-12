@@ -3,6 +3,7 @@ package com.shankyank.gradle.aws.apigateway.specification
 import com.shankyank.gradle.aws.apigateway.model.HttpMethod
 import groovy.transform.Canonical
 import groovy.transform.Memoized
+import groovy.util.logging.Slf4j
 
 /**
  * A resource defined by the specification. Each resource is defined
@@ -10,7 +11,11 @@ import groovy.transform.Memoized
  * may not have operations and child resources associated with them.
  */
 @Canonical
+@Slf4j
 class ResourceSpecification implements Comparable<ResourceSpecification> {
+    /** The path separator. */
+    private static final String PATH_SEPARATOR = '/'
+
     /** The parent of this resource. */
     ResourceSpecification parent
 
@@ -24,10 +29,22 @@ class ResourceSpecification implements Comparable<ResourceSpecification> {
     private Map<String, ResourceSpecification> children = [:]
 
     /**
-     * @return the children of this resource
+     * Ensures all ResourceSpecifications along the provided relative
+     * path exist, creating them if necessary.
+     * @param relativePath the path to the descendant, relative to this resource
      */
-    List<ResourceSpecification> getChildren() {
-        [] + children.values()
+    void ensureAllResourcesOnPathExist(final String relativePath) {
+        log.debug("Ensuring ${path}::${relativePath} exists")
+        List pathParts = getRelativePathParts(relativePath)
+        if (pathParts) {
+            ResourceSpecification child = children[pathParts[0]]
+            if (!child) {
+                child = new ResourceSpecification(name: pathParts[0])
+                addChild(child)
+                log.debug("Created Resource '${child.name}' in Resource '${path}'")
+            }
+            child.ensureAllResourcesOnPathExist(pathParts.tail().join(PATH_SEPARATOR))
+        }
     }
 
     /**
@@ -54,11 +71,12 @@ class ResourceSpecification implements Comparable<ResourceSpecification> {
      * should be specified as '/'-separated relative paths to this resource and
      * leading '/' characters will be stripped before evaluation. A null or empty
      * path can be used to refer to this resource.
-     * @param path the path to the child resource
+     * @param relativePath the path to the child resource
      * @return the resource at the given path
      */
-    ResourceSpecification findResourceAtPath(final String path) {
-        findDescendantResource(getRelativePathParts(path))
+    ResourceSpecification findResourceAtPath(final String relativePath) {
+        log.debug("ResourceSpecification[${path}].findResourceAtPath('${relativePath}')")
+        findDescendantResource(getRelativePathParts(relativePath))
     }
 
     /**
@@ -113,7 +131,7 @@ class ResourceSpecification implements Comparable<ResourceSpecification> {
      */
     @Memoized
     String getPath() {
-        "${parentPath}/${name}"
+        "${parentPath}${PATH_SEPARATOR}${name}".replaceAll(/${PATH_SEPARATOR}+/, PATH_SEPARATOR)
     }
 
     /**
@@ -121,7 +139,7 @@ class ResourceSpecification implements Comparable<ResourceSpecification> {
      */
     @Memoized
     SortedSet<ResourceSpecification> getFlattenedResourceTree() {
-        new TreeSet(this) + children?.collectMany { it.flattenedResourceTree }
+        new TreeSet([ this ]) + children?.values()?.collectMany { it.flattenedResourceTree }
     }
 
     @Override
@@ -138,13 +156,7 @@ class ResourceSpecification implements Comparable<ResourceSpecification> {
      *         they appear in the input path
      */
     private List<String> getRelativePathParts(final String path) {
-        (path =~ /^\/*(.*)\/*$/).with {
-            if (it) {
-                it[0][1].replaceAll(/\/+/, '/').split('/') as List
-            } else {
-                []
-            }
-        }
+        ((path =~ /^\/*(.*?)\/*$/)[0][1]?.replaceAll(/\/+/, PATH_SEPARATOR)?.split(PATH_SEPARATOR) as List).findAll { it?.trim() } ?: []
     }
 
     /**
@@ -154,6 +166,7 @@ class ResourceSpecification implements Comparable<ResourceSpecification> {
      * @return the descendant at the requested path
      */
     private ResourceSpecification findDescendantResource(final List<String> pathParts) {
+        log.debug("Finding descendant ${pathParts} for ResourceSpecification '${name}'")
         pathParts ? children[pathParts.head()]?.findDescendantResource(pathParts.tail()) : this
     }
 }

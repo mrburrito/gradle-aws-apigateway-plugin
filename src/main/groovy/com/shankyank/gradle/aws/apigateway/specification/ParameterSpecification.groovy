@@ -9,13 +9,13 @@ import groovy.transform.Canonical
 @Canonical
 class ParameterSpecification {
     /** The parameter location. */
-    final ParameterLocation location
+    ParameterLocation location
 
     /** The parameter name. */
-    final String name
+    String name
 
     /** Is this parameter required? */
-    final boolean required
+    boolean required
 
     /**
      * @return the parameter name as it appears in an AWS request integration

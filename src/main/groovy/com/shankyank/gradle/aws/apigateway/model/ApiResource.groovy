@@ -41,10 +41,10 @@ class ApiResource implements ApiContainer {
      */
     void delete() {
         if (rootResource) {
-            debug("Deleting methods on Root Resource '${path}'")
+            debug("Deleting methods on Root Resource '${resourceId}: ${path}'")
             methods.values().each { it.delete() }
         } else {
-            debug("Deleting Resource '${path}'")
+            debug("Deleting Resource '${resourceId}: ${path}'")
             apiGateway.deleteResource(new DeleteResourceRequest(
                     restApiId: apiId,
                     resourceId: resourceId
@@ -55,7 +55,7 @@ class ApiResource implements ApiContainer {
     /**
      * @return the map of HttpOp to ApiMethod for this resource
      */
-    Map getMethods() {
+    Map<HttpMethod, ApiMethod> getMethods() {
         resource.resourceMethods?.collectEntries { op, method ->
             [ (HttpMethod.fromAwsHttpMethod(op)): wrapMethod(method) ]
         } ?: [:]

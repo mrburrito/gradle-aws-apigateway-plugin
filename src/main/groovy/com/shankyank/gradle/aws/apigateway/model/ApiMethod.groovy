@@ -10,10 +10,12 @@ import com.shankyank.gradle.aws.apigateway.specification.RequestIntegrationSpeci
 import com.shankyank.gradle.aws.apigateway.specification.ResponseSpecification
 import com.shankyank.gradle.aws.apigateway.specification.ResponseIntegrationSpecification
 import groovy.transform.Memoized
+import groovy.util.logging.Slf4j
 
 /**
  * Decorator around an AWS Method.
  */
+@Slf4j('logger')
 class ApiMethod implements ApiResourceContainer {
     /** The decorated method. */
     private final Method method

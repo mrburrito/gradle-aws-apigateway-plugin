@@ -72,7 +72,7 @@ class Api implements ApiGatewayContainer {
      */
     void populateApi(final ApiSpecification specification) {
         specification.models.each { getOrCreateModel(it) }
-        specification.rootResource
+        createResources(specification.rootResource)
     }
 
     /**
@@ -122,7 +122,7 @@ class Api implements ApiGatewayContainer {
      * @return the created model
      */
     ApiModel createModel(final ModelSpecification model) {
-        debug("Creating Model '${model.name}'")
+        debug("Creating Model '${model.name}', Schema: ${model.schema}")
         try {
             wrapModel(apiGateway.createModel(new CreateModelRequest(
                     restApiId: apiId,
@@ -158,7 +158,7 @@ class Api implements ApiGatewayContainer {
      * @return a map of Resource path to Resource
      */
     Map<String, ApiResource> getResourceMap() {
-        resources.collectEntries { [ (it.resourcePath): it ] }
+        resources.collectEntries { [ (it.path): it ] }
     }
 
     /**
@@ -176,8 +176,7 @@ class Api implements ApiGatewayContainer {
      */
     void createResources(final ResourceSpecification rootResource) {
         Map<String, ApiResource> resourceCache = resourceMap
-        List<ResourceSpecification> flatResourceTree = rootResource.flattenedResourceTree.sort()
-        flatResourceTree.each { resource ->
+        rootResource.flattenedResourceTree.each { resource ->
             if (!resourceCache[resource.path]) {
                 ApiResource created = createResource(resource, resourceCache[resource.parentPath])
                 resourceCache[created.path] = created

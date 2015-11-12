@@ -9,6 +9,7 @@ import com.github.fge.jsonschema.core.exceptions.ProcessingException
 import com.github.fge.jsonschema.core.report.ProcessingReport
 import com.github.fge.jsonschema.main.JsonSchemaFactory
 import com.shankyank.gradle.aws.apigateway.specification.SchemaConverter
+import com.wordnik.swagger.util.Json
 import groovy.transform.Memoized
 import groovy.util.logging.Slf4j
 
@@ -34,10 +35,10 @@ class SwaggerJsonSchemaConverter implements SchemaConverter {
     private ObjectMapper mapper
 
     SwaggerJsonSchemaConverter(Map<String, Object> models) {
-        mapper = new ObjectMapper()
+        mapper = Json.mapper()
         this.models = models?.collectEntries { name, model ->
             if (log.debugEnabled) {
-                log.debug("Creating ResolvedSchema for [ ${name}: ${mapper.writeValueAsString(model)} ]")
+                log.debug("Creating ResolvedSchema for ${name} [ ${toPrettyJsonString(model)} ]")
             }
             [ (name): new ResolvedSchema(this, name, model) ]
         } ?: [:]
@@ -170,12 +171,15 @@ class SwaggerJsonSchemaConverter implements SchemaConverter {
                 schemaRootNode.set(name, schema.jsonModel)
             }
 
-            JsonNode flatSchema = jsonModel.deepCopy().set(SCHEMA_ROOT, schemaRootNode)
+            JsonNode flatSchema = jsonModel.deepCopy()
+            if (resolvedDependencies) {
+                flatSchema.set(SCHEMA_ROOT, schemaRootNode)
+            }
             validateJsonSchema(flatSchema)
             if (log.debugEnabled) {
-                log.debug("Generated JsonSchema for Model ${name}: ${toPrettyJsonString(flatSchema)}")
+                log.debug("Generated JsonSchema for Model ${name}: ${schemaConverter.toPrettyJsonString(flatSchema)}")
             } else {
-                log.info("Generated JsonSchema for Model ${name}: ${toJsonString(flatSchema)}")
+                log.info("Generated JsonSchema for Model ${name}: ${schemaConverter.toJsonString(flatSchema)}")
             }
             schemaConverter.toJsonString(flatSchema)
         }

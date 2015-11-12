@@ -22,7 +22,7 @@ class ResponseSpecification {
      */
     @Memoized
     Map<String, Boolean> getAwsResponseHeaders() {
-        headers.collectEntries { param ->
+        headers?.collectEntries { param ->
             [ (param.awsResponseParameterName): param.required ]
         }
     }

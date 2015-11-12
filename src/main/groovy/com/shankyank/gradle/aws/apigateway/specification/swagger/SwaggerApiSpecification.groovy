@@ -47,7 +47,9 @@ class SwaggerApiSpecification implements ApiSpecification<Swagger> {
 
     @Memoized
     Collection<ModelSpecification> getModels() {
-        specification.definitions.collect(this.&createModelSpecification)
+        specification.definitions.collect { name, model ->
+            createModelSpecification(model, name: name, description:  model.description)
+        }
     }
 
     @Memoized
@@ -64,6 +66,7 @@ class SwaggerApiSpecification implements ApiSpecification<Swagger> {
      */
     @PackageScope
     ModelSpecification createModelSpecification(final Object model, final String name=null, final String description=null) {
+        log.debug("Creating Model Specification [${name}] -- '${description}': ${model}")
         String modelName = name ?: generateModelName(description)
         new ModelSpecification(
                 name: modelName,
@@ -82,6 +85,7 @@ class SwaggerApiSpecification implements ApiSpecification<Swagger> {
      */
     @PackageScope
     ModelSpecification createModelSpecification(final Map<String, String> args, final Object model) {
+        log.debug("Creating Model Specification for [ Name: ${args?.name}, Description: ${args?.description} ]: ${model}")
         createModelSpecification(model, args?.get('name'), args?.get('description'))
     }
 
@@ -92,7 +96,7 @@ class SwaggerApiSpecification implements ApiSpecification<Swagger> {
      */
     @PackageScope
     ModelSpecification resolveReferencedModel(final Object reference) {
-        getReferenceTarget(reference)?.with { schemaConverter.getSchemaForNamedModel(it) }
+        getReferenceTarget(reference)?.with { modelsByName[it] }
     }
 
     /**
@@ -106,22 +110,30 @@ class SwaggerApiSpecification implements ApiSpecification<Swagger> {
     }
 
     /**
+     * @return the defined Models in this specification, mapped by name
+     */
+    @Memoized
+    private Map<String, ModelSpecification> getModelsByName() {
+        models.collectEntries { model -> [ (model.name): model ] }
+    }
+
+    /**
      * Generates a model name from a provided description, creating a random name
      * if the description is empty.
      * @param description the description
      * @return the generated name
      */
     private String generateModelName(final String description=null) {
-        sanitizeModelName(description) ?: "Model_${UUID.randomUUID().toString()[0..8]}"
+        sanitizeModelName(description) ?: "Model${UUID.randomUUID().toString()[0..<8]}"
     }
 
     /**
-     * Cleans a generated model name, ensuring it contains only alpha-numeric and _ characters.
+     * Cleans a generated model name, ensuring it contains only alpha-numeric characters.
      * @param name the name to clean
      * @return the cleaned name
      */
     private String sanitizeModelName(final String name) {
-        name?.trim()?.replaceAll(/\w/, '_')?.replaceAll(/_+/, '_')
+        name?.trim()?.replaceAll(/\W/, '')
     }
 
     /**
