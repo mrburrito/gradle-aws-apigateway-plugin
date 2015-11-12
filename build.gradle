@@ -7,6 +7,10 @@ apply plugin: 'maven-publish'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 
+if (file('deploy.gradle')) {
+    apply from: 'deploy.gradle'
+}
+
 repositories {
     mavenLocal()
     mavenCentral()

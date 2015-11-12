@@ -1,0 +1,12 @@
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+publishing {
+    repositories {
+        maven {
+            name 'My Deployment Repository'
+            url 'My Deployment Repository URL'
+            credentials {}
+        }
+    }
+}
