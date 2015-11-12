@@ -12,9 +12,8 @@ class AWSApiGatewayListTask extends BaseAWSApiGatewayTask {
 
     @TaskAction
     void listApis() {
-        apiGateway.restApis.with {
-            println "Found ${size()} APIs:"
-            it.each { api -> println "\t${api.apiId}: ${api.apiName}\n\t\t${api.apiDescription}\n\t\tCreated: ${api.apiCreatedDate}" }
-        }
+        List apis = apiGateway.restApis
+        logger.quiet("Found ${apis.size()} APIs:")
+        apis.each { api -> logger.quiet("\t${api.apiId}: ${api.apiName}\n\t\t${api.apiDescription}\n\t\tCreated: ${api.apiCreatedDate}") }
     }
 }

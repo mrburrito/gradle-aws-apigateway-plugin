@@ -17,6 +17,6 @@ class AWSApiGatewayGetApiTask extends BaseAWSApiGatewayTask {
             throw new GradleException("API ID must be provided")
         }
         Api api = apiGateway.getApiById(id)
-        println "API[${id}]: ${api ?: 'Not Found'}"
+        logger.quiet("API[${id}]: ${api ?: 'Not Found'}")
     }
 }
