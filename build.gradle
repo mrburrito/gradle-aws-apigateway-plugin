@@ -1,5 +1,5 @@
 group 'com.shankyank.gradle'
-version '0.1-SNAPSHOT'
+version '0.1'
 
 apply plugin: 'groovy'
 apply plugin: 'maven'
@@ -12,7 +12,6 @@ if (file('deploy.gradle')) {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     jcenter()
 }
