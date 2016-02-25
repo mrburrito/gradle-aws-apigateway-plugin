@@ -9,9 +9,9 @@ import com.github.fge.jsonschema.core.exceptions.ProcessingException
 import com.github.fge.jsonschema.core.report.ProcessingReport
 import com.github.fge.jsonschema.main.JsonSchemaFactory
 import com.shankyank.gradle.aws.apigateway.specification.SchemaConverter
-import com.wordnik.swagger.util.Json
 import groovy.transform.Memoized
 import groovy.util.logging.Slf4j
+import io.swagger.util.Json
 
 /**
  * Translates Swagger models to flattened JsonSchema with all references included

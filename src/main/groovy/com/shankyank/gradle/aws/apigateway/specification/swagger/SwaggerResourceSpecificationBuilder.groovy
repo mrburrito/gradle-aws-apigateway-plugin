@@ -3,11 +3,13 @@ package com.shankyank.gradle.aws.apigateway.specification.swagger
 import com.shankyank.gradle.aws.apigateway.model.HttpMethod
 import com.shankyank.gradle.aws.apigateway.specification.MethodSpecification
 import com.shankyank.gradle.aws.apigateway.specification.ResourceSpecification
-import com.wordnik.swagger.models.Operation
-import com.wordnik.swagger.models.Path
-import com.wordnik.swagger.models.Swagger
+import groovy.transform.Memoized
 import groovy.transform.PackageScope
 import groovy.util.logging.Slf4j
+import io.swagger.models.Operation
+import io.swagger.models.Path
+import io.swagger.models.Swagger
+import java.util.regex.Matcher
 
 /**
  * Builds a resource specification tree from a Swagger specifciation.
@@ -15,6 +17,8 @@ import groovy.util.logging.Slf4j
 @PackageScope
 @Slf4j
 class SwaggerResourceSpecificationBuilder {
+    /** The API Gateway Stage Vendor Extension. */
+    static final String API_GATEWAY_STAGE_EXTENSION = 'x-amazon-apigateway-stage'
     /** The resource path separator. */
     static final String RESOURCE_PATH_SEPARATOR = '/'
 
@@ -50,12 +54,38 @@ class SwaggerResourceSpecificationBuilder {
     }
 
     /**
+     * @return the portion of the base path representing the API Gateway stage, if it is configured
+     */
+    @Memoized
+    private String getApiGatewayStage() {
+        swagger.vendorExtensions?."${API_GATEWAY_STAGE_EXTENSION}"?.trim() ?: ''
+    }
+
+    /**
+     * @return the API base path, with the API Gateway Stage stripped
+     */
+    @Memoized
+    private String getBasePath() {
+        String path = swagger.basePath
+        if (apiGatewayStage) {
+            Matcher m = path =~ /^\/?${apiGatewayStage}(\/.*)?$/
+            if (m.matches()) {
+                path = m[0][1] ?: ''
+            } else {
+                throw new IllegalStateException(
+                        "basePath '${swagger.basePath}' does not begin with ${API_GATEWAY_STAGE_EXTENSION} '${apiGatewayStage}'")
+            }
+        }
+        path
+    }
+
+    /**
      * Get the full path to the given resource.
      * @param resourcePath the path to the target resource
      * @return the full path, including basePath, to the resource
      */
     private String getFullResourcePath(final String resourcePath) {
-        cleanPathSeparators("/${swagger.basePath}/${resourcePath}")
+        cleanPathSeparators("/${basePath}/${resourcePath}")
     }
 
     /**

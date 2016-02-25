@@ -4,10 +4,10 @@ import com.shankyank.gradle.aws.apigateway.specification.ApiSpecification
 import com.shankyank.gradle.aws.apigateway.specification.ModelSpecification
 import com.shankyank.gradle.aws.apigateway.specification.ResourceSpecification
 import com.shankyank.gradle.aws.apigateway.specification.SchemaConverter
-import com.wordnik.swagger.models.Swagger
 import groovy.transform.Memoized
 import groovy.transform.PackageScope
 import groovy.util.logging.Slf4j
+import io.swagger.models.Swagger
 
 /**
  * ApiSpecification wrapper for Swagger specifications.

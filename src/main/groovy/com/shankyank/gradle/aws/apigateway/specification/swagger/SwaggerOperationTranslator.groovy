@@ -1,6 +1,7 @@
 package com.shankyank.gradle.aws.apigateway.specification.swagger
 
 import com.amazonaws.services.apigateway.model.IntegrationType
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.shankyank.gradle.aws.apigateway.model.HttpMethod
 import com.shankyank.gradle.aws.apigateway.model.ParameterLocation
 import com.shankyank.gradle.aws.apigateway.specification.MethodSpecification
@@ -9,18 +10,23 @@ import com.shankyank.gradle.aws.apigateway.specification.ParameterSpecification
 import com.shankyank.gradle.aws.apigateway.specification.RequestIntegrationSpecification
 import com.shankyank.gradle.aws.apigateway.specification.ResponseIntegrationSpecification
 import com.shankyank.gradle.aws.apigateway.specification.ResponseSpecification
-import com.wordnik.swagger.models.Operation
-import com.wordnik.swagger.models.Swagger
-import com.wordnik.swagger.models.parameters.BodyParameter
-import com.wordnik.swagger.models.parameters.Parameter
 import groovy.transform.Memoized
 import groovy.transform.PackageScope
+import groovy.util.logging.Slf4j
+import io.swagger.models.Operation
+import io.swagger.models.Swagger
+import io.swagger.models.parameters.BodyParameter
+import io.swagger.models.parameters.Parameter
 
 /**
  * Assists in the translation of an Operation to a MethodSpecification.
  */
 @PackageScope
+@Slf4j
 class SwaggerOperationTranslator {
+    /** ObjectMapper for JSON->Map conversion */
+    private static final ObjectMapper JSON_MAPPER = new ObjectMapper()
+
     /** The authorization extension key. */
     private static final String AUTH_EXTENSION = 'x-amazon-apigateway-auth'
 
@@ -120,8 +126,10 @@ class SwaggerOperationTranslator {
      * @return the request integration specification for this Operation
      */
     private RequestIntegrationSpecification getRequestIntegrationSpecification() {
+        log.debug("Building RequestIntegrationSpecification from:\n${integrationExtensions.collect {k,v->"${k}: ${v}"}.join('\n')}")
+        def myLog = log
         integrationExtensions?.with {
-            def strVal = { key -> it[key] ?: '' }
+            def strVal = { key -> myLog.debug("Key: ${key}, it[key]: ${it[key]}, it: ${it}"); it[key] ?: '' }
             def mapVal = { key -> it[key] ?: [:] }
             def listVal = { key -> it[key] ?: [] }
             new RequestIntegrationSpecification(
@@ -163,7 +171,8 @@ class SwaggerOperationTranslator {
      * @return the defined vendor extensions for this Operation
      */
     private Map getVendorExtensions() {
-        operation?.vendorExtensions ?: [:]
+        def ext = operation?.vendorExtensions
+        ext != null ? JSON_MAPPER.convertValue(ext, Map) : [:]
     }
 
     /**

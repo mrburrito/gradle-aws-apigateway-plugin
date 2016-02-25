@@ -1,7 +1,6 @@
 package com.shankyank.gradle.aws.apigateway.specification
 
 import com.shankyank.gradle.aws.apigateway.specification.swagger.SwaggerApiSpecification
-import com.wordnik.swagger.models.Swagger
 import groovy.util.logging.Slf4j
 import io.swagger.parser.SwaggerParser
 import org.gradle.api.GradleException

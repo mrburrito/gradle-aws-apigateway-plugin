@@ -4,7 +4,7 @@ import com.shankyank.gradle.aws.apigateway.model.ParameterLocation
 import com.shankyank.gradle.aws.apigateway.specification.ModelSpecification
 import com.shankyank.gradle.aws.apigateway.specification.ParameterSpecification
 import com.shankyank.gradle.aws.apigateway.specification.ResponseSpecification
-import com.wordnik.swagger.models.Response
+import io.swagger.models.Response
 
 /**
  * Translates an Operation Response to a ResponseSpecification.
