@@ -1,5 +1,8 @@
 package com.shankyank.gradle.aws.apigateway
 
+import com.amazonaws.AmazonClientException
+import com.amazonaws.AmazonServiceException
+import com.amazonaws.AmazonWebServiceRequest
 import com.amazonaws.ClientConfiguration
 import com.amazonaws.auth.AWSCredentialsProvider
 import com.amazonaws.auth.AWSCredentialsProviderChain
@@ -10,15 +13,21 @@ import com.amazonaws.auth.profile.ProfileCredentialsProvider
 import com.amazonaws.regions.Region
 import com.amazonaws.regions.RegionUtils
 import com.amazonaws.regions.Regions
+import com.amazonaws.retry.PredefinedRetryPolicies
+import com.amazonaws.retry.RetryPolicy
+import com.amazonaws.retry.RetryPolicy.BackoffStrategy
+import com.amazonaws.retry.RetryPolicy.RetryCondition
 import com.amazonaws.services.apigateway.AmazonApiGateway
 import com.amazonaws.services.apigateway.AmazonApiGatewayClient
 import groovy.transform.Memoized
+import groovy.util.logging.Slf4j
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 
 /**
  * Configuration for the AWSApiGatewayPlugin.
  */
+@Slf4j
 class AWSApiGatewayPluginExtension {
     /** The name of the extension. */
     static final String NAME = 'apigateway'
@@ -31,6 +40,12 @@ class AWSApiGatewayPluginExtension {
             'refresh': {},
             'getCredentials': { null }
     ] as AWSCredentialsProvider
+
+    /** The retry condition. */
+    private static final RetryCondition RETRY_CONDITION = new RateLimitRetryCondition()
+
+    /** The backoff strategy. */
+    private static final BackoffStrategy BACKOFF_STRATEGY = new RateLimitBackoffStrategy()
 
     /** The containing project. */
     Project project
@@ -47,13 +62,16 @@ class AWSApiGatewayPluginExtension {
     /** The proxy port. */
     int proxyPort = -1
 
+    /** The maximum number of retries, defaults to 8 (total retry delay of ~51s) */
+    int maxRetries = 8
+
     /**
      * Initialize the plugin extension.
      * @param proj the containing project
      */
     AWSApiGatewayPluginExtension(final Project proj) {
         this.project = proj
-        proj.logger.info("Created AWSApiGatewayPluginExtension in ${proj}")
+        log.info("Created AWSApiGatewayPluginExtension in ${proj}")
     }
 
     /**
@@ -84,11 +102,21 @@ class AWSApiGatewayPluginExtension {
     }
 
     protected ClientConfiguration getClientConfiguration() {
-        proxyDefined ? new ClientConfiguration(proxyHost: proxyHost, proxyPort: proxyPort) : new ClientConfiguration()
+        ClientConfiguration config = new ClientConfiguration(retryPolicy: retryPolicy, maxErrorRetry: maxRetries)
+        if (proxyDefined) {
+            config.proxyHost = proxyHost
+            config.proxyPort = proxyPort
+        }
+        project.logger.info("API Gateway Client Configuration: ${config}")
+        config
     }
 
     protected boolean isProxyDefined() {
         proxyHost?.trim() && proxyPort > 0
+    }
+
+    protected RetryPolicy getRetryPolicy() {
+        new RetryPolicy(RETRY_CONDITION, BACKOFF_STRATEGY, maxRetries, true)
     }
 
     protected boolean isProfileConfigured() {
