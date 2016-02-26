@@ -72,8 +72,7 @@ class SwaggerResourceSpecificationBuilder {
             if (m.matches()) {
                 path = m[0][1] ?: ''
             } else {
-                throw new IllegalStateException(
-                        "basePath '${swagger.basePath}' does not begin with ${API_GATEWAY_STAGE_EXTENSION} '${apiGatewayStage}'")
+                log.info("basePath '${swagger.basePath}' does not begin with ${API_GATEWAY_STAGE_EXTENSION} '${apiGatewayStage}'")
             }
         }
         path
