@@ -1,8 +1,5 @@
 package com.shankyank.gradle.aws.apigateway
 
-import com.amazonaws.AmazonClientException
-import com.amazonaws.AmazonServiceException
-import com.amazonaws.AmazonWebServiceRequest
 import com.amazonaws.ClientConfiguration
 import com.amazonaws.auth.AWSCredentialsProvider
 import com.amazonaws.auth.AWSCredentialsProviderChain
@@ -13,7 +10,6 @@ import com.amazonaws.auth.profile.ProfileCredentialsProvider
 import com.amazonaws.regions.Region
 import com.amazonaws.regions.RegionUtils
 import com.amazonaws.regions.Regions
-import com.amazonaws.retry.PredefinedRetryPolicies
 import com.amazonaws.retry.RetryPolicy
 import com.amazonaws.retry.RetryPolicy.BackoffStrategy
 import com.amazonaws.retry.RetryPolicy.RetryCondition
