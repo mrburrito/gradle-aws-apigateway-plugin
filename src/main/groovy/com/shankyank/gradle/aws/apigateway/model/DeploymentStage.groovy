@@ -66,13 +66,6 @@ class DeploymentStage implements ApiContainer {
         ))
     }
 
-    /**
-     * @return the AWS ID of this stage
-     */
-    String getAwsId() {
-        "${api.apiId}/${name}"
-    }
-
     protected DeploymentStage getExistingStage() {
         GetStageResult result = apiGateway.getStage(new GetStageRequest(
                 restApiId: api.apiId,

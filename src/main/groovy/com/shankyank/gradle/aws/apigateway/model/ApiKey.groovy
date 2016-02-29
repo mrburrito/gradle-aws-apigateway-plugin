@@ -24,26 +24,26 @@ class ApiKey implements ApiGatewayContainer {
 
     /**
      * Grants access to the target stage.
-     * @param stage the stage
+     * @param stageId the stage ID
      */
-    void grantAccessToStage(final DeploymentStage stage) {
-        if (allowedStages.add(stage.awsId)) {
-            log.debug("Granting access to ${stage.awsId} for key ${name}")
+    void grantAccessToStage(final String stageId) {
+        if (allowedStages.add(stageId)) {
+            log.debug("Granting access to ${stageId} for key ${name}")
             updateAccessPolicy([
-                    new PatchOperation(op: 'add', path: '/stages', value: stage.awsId)
+                    new PatchOperation(op: 'add', path: '/stages', value: stageId)
             ])
         }
     }
 
     /**
      * Removes access to the target stage, if it was provided.
-     * @param stage the stage
+     * @param stageId the stage ID
      */
-    void revokeAccessToStage(final DeploymentStage stage) {
-        if (allowedStages.remove(stage.awsId)) {
-            log.debug("Revoking access to ${stage.awsId} for key ${name}")
+    void revokeAccessToStage(final String stageId) {
+        if (allowedStages.remove(stageId)) {
+            log.debug("Revoking access to ${stageId} for key ${name}")
             updateAccessPolicy([
-                    new PatchOperation(op: 'remove', path: '/stages', value: stage.awsId)
+                    new PatchOperation(op: 'remove', path: '/stages', value: stageId)
             ])
         }
     }

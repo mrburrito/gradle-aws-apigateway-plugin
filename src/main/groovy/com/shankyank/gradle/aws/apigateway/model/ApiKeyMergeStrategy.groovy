@@ -17,19 +17,19 @@ enum ApiKeyMergeStrategy {
      * Update the access policy according to this strategy so that all existing keys with
      * names found in `allowedKeyNames` are able to access the API deployed to the provided
      * stage.
-     * @param stage the stage to which access should be configured
+     * @param stageId the ID of the stage to which access should be configured
      * @param allowedKeys the names of the keys allowed to access the stage
      * @param keys the keys to configure
      */
-    void configureAccessToStage(final DeploymentStage stage, final Set<String> allowedKeyNames, final List<ApiKey> keys) {
-        log.info("Granting access to stage [${stage.apiName}/${stage.name}] for keys: ${allowedKeyNames}")
+    void configureAccessToStage(final String stageId, final Set<String> allowedKeyNames, final List<ApiKey> keys) {
+        log.info("Granting access to stage [${stageId}] for keys: ${allowedKeyNames}")
         keys.each {
             if (allowedKeyNames.contains(it.name)) {
-                log.debug("Granting access to ${stage.apiName}/${stage.name} for key ${it.name} [${it.id}]")
-                it.grantAccessToStage(stage)
+                log.debug("Granting access to ${stageId} for key ${it.name} [${it.id}]")
+                it.grantAccessToStage(stageId)
             } else if (this == REPLACE) {
-                log.debug("Revoking access to ${stage.apiName}/${stage.name} for key ${it.name} [${it.id}]")
-                it.revokeAccessToStage(stage)
+                log.debug("Revoking access to ${stageId} for key ${it.name} [${it.id}]")
+                it.revokeAccessToStage(stageId)
             }
         }
     }
