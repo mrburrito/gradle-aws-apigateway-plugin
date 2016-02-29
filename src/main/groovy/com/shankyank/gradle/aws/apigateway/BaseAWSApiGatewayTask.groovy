@@ -1,5 +1,6 @@
 package com.shankyank.gradle.aws.apigateway
 
+import com.amazonaws.services.apigateway.AmazonApiGateway
 import com.shankyank.gradle.aws.apigateway.model.Api
 import com.shankyank.gradle.aws.apigateway.model.ApiGateway
 import groovy.transform.Memoized
@@ -27,7 +28,15 @@ abstract class BaseAWSApiGatewayTask extends DefaultTask {
      */
     @Memoized
     protected final ApiGateway getApiGateway() {
-        new ApiGateway(pluginExtension.apiGateway)
+        new ApiGateway(awsApiGateway)
+    }
+
+    /**
+     * @return the AWS ApiGateway client
+     */
+    @Memoized
+    protected final AmazonApiGateway getAwsApiGateway() {
+        pluginExtension.apiGateway
     }
 
     /**

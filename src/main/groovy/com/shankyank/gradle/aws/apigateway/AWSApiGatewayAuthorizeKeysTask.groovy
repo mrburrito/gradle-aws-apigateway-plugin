@@ -47,9 +47,9 @@ class AWSApiGatewayAuthorizeKeysTask extends BaseAWSApiGatewayTask {
      * @return all existing API keys
      */
     protected List<ApiKey> getAllApiKeys() {
-        apiGateway.collectPagedResults(new GetApiKeysRequest(), apiGateway.apiGateway.&getApiKeys).collect {
+        apiGateway.collectPagedResults(new GetApiKeysRequest(), awsApiGateway.&getApiKeys).collect {
             new ApiKey(
-                    apiGateway: api.apiGateway,
+                    apiGateway: awsApiGateway,
                     id: it.id,
                     name: it.name,
                     allowedStages: it.stageKeys as Set
