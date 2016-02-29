@@ -13,5 +13,6 @@ class AWSApiGatewayUpdateStageTask extends BaseAWSApiGatewayStageTask {
     @TaskAction
     void updateStage() {
         deploymentStage.update()
+        updateApiKeyAccessForStage()
     }
 }

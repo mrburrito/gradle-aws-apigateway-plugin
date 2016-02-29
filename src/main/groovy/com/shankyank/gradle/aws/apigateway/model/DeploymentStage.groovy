@@ -34,6 +34,9 @@ class DeploymentStage implements ApiContainer {
     /** Should logging be enabled? */
     CloudWatchLogLevel logLevel
 
+    /**
+     * Deploy the target API to this Stage.
+     */
     void deploy() {
         apiGateway.createDeployment(new CreateDeploymentRequest(
                 restApiId: api.apiId,
@@ -44,6 +47,10 @@ class DeploymentStage implements ApiContainer {
         update()
     }
 
+    /**
+     * Update the settings of the previously deployed Stage
+     * to match this configuration.
+     */
     void update() {
         List patchOperations = [
                 descriptionPatchOp,
@@ -57,6 +64,13 @@ class DeploymentStage implements ApiContainer {
                 stageName: name,
                 patchOperations: patchOperations
         ))
+    }
+
+    /**
+     * @return the AWS ID of this stage
+     */
+    String getAwsId() {
+        "${api.apiId}/${name}"
     }
 
     protected DeploymentStage getExistingStage() {
