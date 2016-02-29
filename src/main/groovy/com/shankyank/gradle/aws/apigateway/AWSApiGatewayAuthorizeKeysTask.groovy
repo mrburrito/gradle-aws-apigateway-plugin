@@ -1,12 +1,9 @@
 package com.shankyank.gradle.aws.apigateway
 
 import com.amazonaws.services.apigateway.model.GetApiKeysRequest
-import com.amazonaws.services.apigateway.model.GetStageRequest
-import com.amazonaws.services.apigateway.model.GetStageResult
 import com.shankyank.gradle.aws.apigateway.model.Api
 import com.shankyank.gradle.aws.apigateway.model.ApiKey
 import com.shankyank.gradle.aws.apigateway.model.ApiKeyMergeStrategy
-import com.shankyank.gradle.aws.apigateway.model.CloudWatchLogLevel
 import groovy.transform.Memoized
 import groovy.util.logging.Slf4j
 import org.gradle.api.tasks.TaskAction
