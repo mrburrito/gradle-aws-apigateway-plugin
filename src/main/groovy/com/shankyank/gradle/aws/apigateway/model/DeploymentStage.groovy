@@ -71,14 +71,15 @@ class DeploymentStage implements ApiContainer {
                 restApiId: api.apiId,
                 stageName: name
         ))
+        def toLogLevel = { str -> str ? CloudWatchLogLevel.valueOf(str) : CloudWatchLogLevel.OFF }
         DeploymentStage stage = new DeploymentStage(
                 api: api,
                 apiGateway: apiGateway,
                 name: result.stageName,
                 stageDescription: result.description,
                 stageVariables: result.variables,
-                logMetrics: result.methodSettings['*/*'].metricsEnabled,
-                logLevel: CloudWatchLogLevel.valueOf(result.methodSettings['*/*'].loggingLevel)
+                logMetrics: result.methodSettings['*/*']?.metricsEnabled ?: false,
+                logLevel: toLogLevel(result.methodSettings['*/*']?.loggingLevel)
         )
         log.info("Found deployed stage: ${stage}")
         stage
@@ -93,7 +94,7 @@ class DeploymentStage implements ApiContainer {
     }
 
     private List getVariablesPatchOps() {
-        Set keysToClear = existingStage.stageVariables.keySet()
+        Set keysToClear = existingStage.stageVariables?.keySet() ?: []
         keysToClear.removeAll(stageVariables.keySet())
         [
                 keysToClear.collect { new PatchOperation(op: 'remove', path: "/variables/${it}") },
