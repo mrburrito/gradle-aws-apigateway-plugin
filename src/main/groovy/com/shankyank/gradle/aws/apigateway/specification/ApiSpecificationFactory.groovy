@@ -17,6 +17,9 @@ class ApiSpecificationFactory {
         SWAGGER {
             @Override
             protected Object parseSpecification(final File specFile) {
+                if (log.debugEnabled) {
+                    System.setProperty("debugParser", "true")
+                }
                 new SwaggerParser().read(specFile.absolutePath)
             }
 
@@ -54,6 +57,7 @@ class ApiSpecificationFactory {
         ApiSpecification parseSpecificationFile(final File specFile) {
             log.info("Reading ${this} specification from ${specFile.absolutePath}")
             def spec = parseSpecification(specFile)
+            log.debug("Parsed Specification: ${spec}")
             if (spec) {
                 createSpecification(spec, specFile).with {
                     if (log.debugEnabled) {
